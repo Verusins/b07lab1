@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.*;
+
 public class Driver {
     public static void main(String [] args) {
         Polynomial p = new Polynomial();
@@ -29,5 +32,30 @@ public class Driver {
 
         Polynomial ans = p1.multiply(p2);
         ans.print();
+
+        String filename = "testfile.txt"; // File name
+
+        try {
+            File file = new File(filename); // Create a File object for "testfile.txt"
+            Polynomial polynomial = new Polynomial(file); // Pass the File object to the constructor
+            System.out.println("File is readable.");
+            polynomial.print();
+        } catch (IOException e) {
+            System.out.println("File is not readable.");
+            e.printStackTrace();
+        }
+
+        try {
+            // Create a Polynomial object
+            Polynomial polynomial = s;
+
+            // Save the polynomial to a file
+            polynomial.saveToFile("output.txt");
+
+            System.out.println("Polynomial saved to file.");
+        } catch (IOException e) {
+            System.out.println("Error saving polynomial to file.");
+            e.printStackTrace();
+        }
     }
 }
