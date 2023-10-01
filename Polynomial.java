@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Polynomial{
     private double[] co;
     private int[] ex;
@@ -12,16 +18,27 @@ public class Polynomial{
         this.ex = _ex;
     }
 
+    // new method
+    private void addTerm(double[] coeffs, int[] exps, double coeff, int exp, int currentIndex) {
+        for (int i = 0; i < currentIndex; i++) {
+            if (exps[i] == exp) {
+                this.co[i] += coeff;
+                return;
+            }
+        }
+        coeffs[currentIndex] = coeff;
+        exps[currentIndex] = exp;
+    }
+
     // file reader
     public Polynomial(File file) throws IOException {
         FileReader fileReader = new FileReader(file);
         BufferedReader reader = new BufferedReader(fileReader);
-        StringBuilder sb = reader.readline();
+        String polynomialStr = reader.readLine();
         int character;
 
         reader.close();
         fileReader.close();
-        String polynomialStr = sb.toString();
 
         String[] terms = polynomialStr.split("(?=[+-])");
         double[] coeffs = new double[terms.length];
