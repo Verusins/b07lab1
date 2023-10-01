@@ -70,9 +70,9 @@ public class Polynomial{
             result_co[i] = this.co[i];
             result_ex[i] = this.ex[i];
         }
-        for(int i=this.ex.length; i<bigLen; i++){
-            result_co[i] = other.co[i-this.ex.length];
-            result_ex[i] = other.ex[i-this.ex.length];
+        for(int i=0; i<other.ex.length; i++){
+            result_co[i+this.ex.length] = other.co[i];
+            result_ex[i+this.ex.length] = other.ex[i];
         }
 
         // merging co with the same ex
@@ -88,8 +88,8 @@ public class Polynomial{
         }
 
         // moving 0s to the end of the array
-        for(int i=bigLen; i<this.ex.length; i--) {
-            for(int j=this.ex.length; j<i; j++) {
+        for(int i=bigLen; i>this.ex.length; i--) {
+            for(int j=this.ex.length; j<i-1; j++) {
                 if(result_co[j] == 0 && result_co[j+1] != 0) {
                     double tmp = result_co[j];
                     result_co[j] = result_co[j+1];
@@ -101,10 +101,8 @@ public class Polynomial{
             }
         }
 
-        int result_len = 1;
-        for(;result_len<=bigLen; result_len++) {
-            if(result_co[result_len-1] == 0) break;
-        }
+        int result_len = 0;
+        while(result_len < bigLen && result_co[result_len] != 0.0) ++ result_len;
 
         // have an array of the proper length.
         double[] ans_co = new double[result_len];
@@ -128,6 +126,7 @@ public class Polynomial{
     }
 
     public Polynomial multiply(Polynomial other) {
+        int bigLen = this.ex.length + other.ex.length;
         double[] result_co = new double[this.co.length * other.co.length];
         int[] result_ex = new int[this.co.length * other.co.length];
         int resultIndex = 0;
@@ -142,7 +141,45 @@ public class Polynomial{
             }
         }
 
-        return new Polynomial(result_co, result_ex);
+        // merging co with the same ex
+        for(int i=0; i<bigLen; i++) {
+            for(int j=i; j<this.ex.length; j++) {
+                for(int k=this.ex.length; k<bigLen; k++) {
+                    if(result_ex[j] == result_ex[k]) {
+                        result_co[j] += result_co[k];
+                        result_co[k] = 0;
+                    }
+                }
+            }
+        }
+
+        // moving 0s to the end of the array
+        for(int i=bigLen; i>this.ex.length; i--) {
+            for(int j=this.ex.length; j<i-1; j++) {
+                if(result_co[j] == 0 && result_co[j+1] != 0) {
+                    double tmp = result_co[j];
+                    result_co[j] = result_co[j+1];
+                    result_co[j+1] = tmp;
+                    int tmp2 = result_ex[j];
+                    result_ex[j] = result_ex[j+1];
+                    result_ex[j+1] = tmp2;
+                }
+            }
+        }
+
+        int result_len = 0;
+        while(result_len < bigLen && result_co[result_len] != 0.0) ++ result_len;
+
+        // have an array of the proper length.
+        double[] ans_co = new double[result_len];
+        int[] ans_ex = new int[result_len];
+
+        for(int i=0; i<result_len; i++) {
+            ans_co[i] = result_co[i];
+            ans_ex[i] = result_ex[i];
+        }
+
+        return new Polynomial(ans_co, ans_ex);
     }
 
     public boolean hasRoot(double x) {
